@@ -1,48 +1,43 @@
-# HPS LLM Parser =⁄
+# HPS LLM Parser
 
-**Intelligent extraction and analysis of scholarly information from History and Philosophy of Science texts using Large Language Models**
+Intelligent extraction and analysis of scholarly information from History and Philosophy of Science texts using Large Language Models.
 
 Transform dense academic texts into structured, interconnected knowledge graphs that track authors, works, concepts, and their relationships across entire documents.
 
----
+## What This Does
 
-## <Ø What This Does
+The HPS LLM Parser analyzes academic texts and extracts:
 
-The HPS LLM Parser analyzes academic texts (books, papers, chapters) and extracts:
+- **Authors & Scholars**: People mentioned with their roles, time periods, and contributions
+- **Works & Publications**: Books, papers, theories with authorship and significance  
+- **Concepts & Topics**: Ideas, methodologies, research areas with relationships
+- **Intellectual Networks**: Who influenced whom, citation relationships
+- **Historical Context**: Time periods, locations, academic institutions
 
-- **=e Authors & Scholars**: People mentioned with their roles, time periods, and contributions
-- **=÷ Works & Publications**: Books, papers, theories with authorship and significance  
-- **>‡ Concepts & Topics**: Ideas, methodologies, research areas with relationships
-- **= Intellectual Networks**: Who influenced whom, citation relationships
-- **=Õ Historical Context**: Time periods, locations, academic institutions
+## Key Features
 
-## ( Key Features
-
-### = **Incremental Knowledge Building**
+### Incremental Knowledge Building
 - **Persistent Memory**: Remembers entities across text chunks
-- **Smart Name Matching**: "Walter J. Ong" í "Ong" í "W. Ong" (same person)
+- **Smart Name Matching**: "Walter J. Ong" -> "Ong" -> "W. Ong" (same person)
 - **Progressive Enhancement**: Each mention adds information to existing entities
 - **Confidence Scoring**: Weights information by reliability and recency
 
-### <Ø **Structured Output Guaranteed** 
+### Structured Output Guaranteed
 - **JSON Schema Enforcement**: Uses Outlines/Guidance for reliable data extraction
 - **Pydantic Validation**: Type-safe, validated output structures
 - **No Parsing Errors**: Structured generation prevents malformed JSON
 
-### =  **Rich Analysis & Visualization**
+### Rich Analysis & Visualization
 - **Beautiful Console Output**: Color-coded tables and panels via Rich
 - **Entity Relationship Maps**: Track intellectual genealogies  
 - **Mention Tracking**: See where each entity appears across the text
 - **Exportable Knowledge Base**: Save results as JSON for further analysis
 
----
-
-## =Ä Quick Start
+## Quick Start
 
 ### Installation
 ```bash
 pip install outlines transformers torch pydantic rich
-# OR: pip install guidance  # Alternative to outlines
 ```
 
 ### Basic Usage
@@ -60,9 +55,6 @@ tokenizer = AutoTokenizer.from_pretrained("path/to/llama-model")
 # Analyze text
 analyzer = HPSAnalyzer(model, tokenizer)
 result = analyzer.analyze_chapter(your_text)
-
-# Rich formatted output is displayed automatically
-# Access structured data: result.authors, result.works, result.topics
 ```
 
 #### Incremental Analysis (Recommended)
@@ -79,51 +71,32 @@ results = analyzer.analyze_text_incrementally(long_text)
 analyzer.save_knowledge_base("knowledge.json")
 ```
 
----
+## How It Works
 
-## <◊ Architecture
+The system processes text in chunks, maintaining a persistent knowledge base:
 
-### Core Components
+1. **Text Chunking**: Splits long texts into 400-600 word segments
+2. **LLM Analysis**: Each chunk analyzed with context of prior knowledge
+3. **Entity Matching**: Links name variations to existing entities
+4. **Knowledge Update**: Adds new information to entity profiles
+5. **Rich Output**: Displays results in formatted tables and panels
 
-#### 1. **Base HPS Analyzer** (`hps_analyzer.py`)
-- Single-pass analysis of text chunks
-- Pydantic schemas for Authors, Works, Topics
-- Rich formatting and visualization
-- Handles chunking for long texts
-
-#### 2. **Incremental Analyzer** (`incremental_hps_analyzer.py`) 
-- **Knowledge Base**: Persistent entity storage across chunks
-- **Smart Entity Matching**: Links name variations to canonical entities
-- **Progressive Information Building**: Updates entities with new mentions
-- **Context-Aware Prompting**: Uses prior knowledge to inform analysis
-
-#### 3. **Structured Generation** 
-- **Outlines Integration**: Guarantees JSON schema compliance
-- **Guidance Support**: Alternative structured generation backend
-- **Error Recovery**: Automatic retries with reduced token limits
-- **Validation**: Pydantic ensures data integrity
-
-### Data Flow
+### Example: Incremental Learning
 
 ```
-=ƒ Input Text
-    ì
-=* Text Chunking (400-600 words)
-    ì
->‡ LLM Analysis + Prior Knowledge Context
-    ì
- Schema Validation (Pydantic)
-    ì
-=ƒ Knowledge Base Update
-    ì
-=  Rich Formatted Output
-    ì
-=æ Export (JSON)
+Chunk 1: "Walter J. Ong was born in 1912..."
+-> Creates: Walter J. Ong (person, born 1912)
+
+Chunk 5: "Ong argued that writing..."  
+-> Recognizes: This is the same Walter J. Ong
+-> Updates: Adds "argued about writing" to his profile
+
+Chunk 10: "As Ong noted earlier..."
+-> Links: Another reference to same person
+-> Builds: Complete profile across all mentions
 ```
 
----
-
-## =À Output Schema
+## Output Schema
 
 ### Author Entity
 ```python
@@ -133,28 +106,6 @@ analyzer.save_knowledge_base("knowledge.json")
   "place": "United States",
   "role": "PHILOSOPHER",
   "brief_description": "Jesuit priest who studied orality and literacy"
-}
-```
-
-### Work Entity
-```python
-{
-  "title": "Orality and Literacy",
-  "author": "Walter J. Ong",
-  "work_type": "BOOK",
-  "publication_info": "1982",
-  "significance": "Seminal work on transition from oral to written culture"
-}
-```
-
-### Topic Entity
-```python
-{
-  "name": "primary orality",
-  "field": "PHILOSOPHY", 
-  "description": "Cultures that have never known writing",
-  "related_concepts": ["secondary orality", "literacy", "consciousness"],
-  "historical_context": "Concept developed in 20th century media studies"
 }
 ```
 
@@ -170,168 +121,59 @@ analyzer.save_knowledge_base("knowledge.json")
     "major_work": "Orality and Literacy"
   },
   "mentions": [
-    {"chunk_id": "chunk_001", "mention_text": "Walter J. Ong", "context": "..."},
-    {"chunk_id": "chunk_015", "mention_text": "Ong", "context": "..."}
-  ],
-  "relationships": ["influenced_by: McLuhan", "contemporary_of: Havelock"]
+    {"chunk_id": "chunk_001", "mention_text": "Walter J. Ong"},
+    {"chunk_id": "chunk_015", "mention_text": "Ong"}
+  ]
 }
 ```
 
----
+## Configuration
 
-## <Ø Use Cases
-
-### Academic Research
-- **Literature Reviews**: Map intellectual landscapes across multiple works
-- **Citation Analysis**: Track influence networks and idea genealogies
-- **Conceptual Evolution**: Follow how ideas develop across time periods
-- **Scholar Mapping**: Build comprehensive profiles of academic figures
-
-### Digital Humanities
-- **Corpus Analysis**: Process large collections of academic texts
-- **Knowledge Graph Construction**: Create queryable databases of scholarly knowledge
-- **Historical Scholarship**: Trace development of ideas across centuries
-- **Interdisciplinary Studies**: Map connections between fields
-
-### Educational Applications
-- **Study Guides**: Generate structured summaries of complex texts
-- **Concept Maps**: Visual representations of idea relationships
-- **Historical Timelines**: Chronological organization of scholars and works
-- **Research Training**: Teach systematic analysis of academic literature
-
----
-
-## ô Configuration
-
-### Model Settings (LLaMA-3.2-3B Optimized)
+### Optimized for LLaMA-3.2-3B
 ```python
 analyzer = IncrementalHPSAnalyzer(
     model=model,
     tokenizer=tokenizer,
     token_max=900,        # Conservative for reliable JSON generation
-    chunk_size=500        # ~750 tokens, captures complete thoughts
+    chunk_size=500        # Captures complete thoughts
 )
 ```
 
-### Chunking Strategy
-- **Optimal Size**: 400-600 words per chunk
-- **Context Preservation**: Maintains paragraph boundaries when possible  
-- **Overlap**: Optional overlap between chunks for continuity
-- **Length Handling**: Automatically chunks 10-20 page texts
-
-### Performance Tuning
-- **Batch Processing**: Process multiple chunks in parallel
-- **Memory Management**: Incremental processing for large corpora
-- **Error Recovery**: Automatic retries with reduced token limits
-- **Caching**: Save intermediate results for interrupted processing
-
----
-
-## =' Advanced Features
+## Advanced Features
 
 ### Name Matching Algorithm
-```python
-# Handles variations automatically
-"Walter J. Ong" == "Ong" == "W. Ong" == "Walter Ong"
-```
-
-**Matching Rules:**
-- Last name matching for academic references
-- Initial expansion (W. í Walter)
-- Subset matching (full name contains shorter form)
+- Handles academic reference variations automatically
+- "Walter J. Ong" == "Ong" == "W. Ong" == "Walter Ong"
+- Last name matching for academic citations
 - Fuzzy matching for OCR errors
 
 ### Confidence Scoring
-- **Recency Bias**: Later mentions get slight confidence boost
-- **Context Quality**: Full descriptions weighted higher than passing references
-- **Source Reliability**: Can weight different text sources differently
-- **Consensus Building**: Multiple mentions increase confidence
+- Later mentions get slight confidence boost
+- Full descriptions weighted higher than passing references
+- Multiple mentions increase confidence
 
-### Relationship Extraction
-- **Influence Networks**: "X influenced by Y"
-- **Contemporary Relationships**: "X contemporary of Y"
-- **Institutional Connections**: "X studied under Y"
-- **Collaboration**: "X co-authored with Y"
+## Use Cases
 
----
+- **Academic Research**: Map intellectual landscapes across multiple works
+- **Digital Humanities**: Process large collections of academic texts
+- **Literature Reviews**: Track influence networks and idea genealogies
+- **Educational Applications**: Generate structured summaries of complex texts
 
-## =  Example Output
+## Files
 
-### Console Output
-```
-=⁄ HPS Chapter Analysis Report
-2024-01-15 14:30:25
+- `hps_analyzer.py`: Core analysis functionality
+- `incremental_hps_analyzer.py`: Incremental knowledge building system
+- `test-hps-analyzer.ipynb`: Basic usage examples
+- `test-incremental-analyzer.ipynb`: Incremental analysis examples
+- `guidance-hps.ipynb`: Guidance-based implementation
+- `outlines-hps.ipynb`: Outlines-based implementation
 
-  Overview                                  
- Main Thesis: Analysis of information       
- theory's historical development            
- Complexity Score: 7/10                      
- Primary Fields: PHILOSOPHY, HISTORY        
-                                            
+## License
 
-=e Authors & Scholars (4 found):
-              ,             ,             ,               
- Name          Role         Period       Description   
-              <             <             <               $
- Walter J.Ong  PHILOSOPHER  1912-2003    Jesuit scholar
- Jonathan M.   THEORIST     20th cent.   Mind-language 
- Plato         PHILOSOPHER  Ancient      Warned about 
- Socrates      PHILOSOPHER  Ancient      Oral tradition
-              4             4             4               
-```
+MIT License
 
-### Knowledge Base Growth
-```
-Processing chunk_001 (1/15)...
-   New entities: 3 | =5 References to known: 0
-
-Processing chunk_005 (5/15)...  
-   New entities: 1 | =5 References to known: 2 | = New relationships: 1
-
-Final Knowledge Base Summary
-  Incremental Analysis Complete  
- Total Entities: 23              
- " People: 12                    
- " Works: 6                       
- " Topics: 5                     
-                                 
- Most Mentioned Entities:        
- " Walter J. Ong (8 mentions)   
- " Plato (4 mentions)           
- " Orality and Literacy (3)     
-                                 
-```
-
----
-
-## > Contributing
-
-We welcome contributions! Areas where help is needed:
-
-- **Model Support**: Additional LLM backends (GPT, Claude, Gemini)
-- **Schema Extensions**: Domain-specific entity types
-- **Visualization**: Web interfaces, network graphs
-- **Language Support**: Multi-language academic texts
-- **Performance**: Optimization for large-scale processing
-
----
-
-## =ƒ License
-
-MIT License - see LICENSE file for details.
-
----
-
-## =O Acknowledgments
-
-- **Outlines**: For structured generation capabilities
-- **Guidance**: Alternative structured generation framework  
-- **Rich**: For beautiful console output
-- **Pydantic**: For robust data validation
-- **LLaMA**: For the underlying language model capabilities
+## Acknowledgments
 
 Built for the digital humanities and computational social science communities.
 
----
-
-*"Every text tells a story of ideas, people, and discoveries. Let's make those stories machine-readable."* =⁄(
+*"Every text tells a story of ideas, people, and discoveries. Let's make those stories machine-readable."*
